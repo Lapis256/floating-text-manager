@@ -1,0 +1,17 @@
+{
+    "format_version": "1.16.100",
+    "minecraft:item": {
+        "description": {
+            "identifier": "lapis256:floating_text_manager"
+        },
+        "components": {
+            "minecraft:foil": true,
+            "minecraft:can_destroy_in_creative": false,
+            "minecraft:max_stack_size": 1,
+            "minecraft:icon": {
+                "texture": "book_portfolio"
+            },
+            "minecraft:on_use_on" : {}
+        }
+    }
+}

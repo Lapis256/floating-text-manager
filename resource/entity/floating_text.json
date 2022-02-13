@@ -1,0 +1,20 @@
+{
+    "format_version": "1.10.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "lapis256:floating_text",
+            "materials": {
+                "default": "skeleton"
+            },
+            "textures": {
+                "default": "textures/entity/floating_text"
+            },
+            "geometry": {
+                "default": "geometry.floating_text"
+            },
+            "render_controllers": [
+                "controller.render.default"
+            ]
+        }
+    }
+}
