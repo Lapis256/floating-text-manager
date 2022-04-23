@@ -15,8 +15,8 @@ jobs:
 
       - name: Copy pack_icon.png
         run: |
-          cp pack_icon.png resource
-          cp pack_icon.png behavior
+          cp pack_icon.jpg resource
+          cp pack_icon.jpg behavior
 
       - name: Install zip
         run: |
