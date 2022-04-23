@@ -19,7 +19,7 @@
         {
             /* Behavior Pack */
             "uuid": "d9ac7288-9c6b-4570-892d-09f62b28f46d",
-            "version": [1, 0, 0]
+            "version": [1, 1, 0]
         }
     ],
     "metadata": {
