@@ -1,0 +1,11 @@
+{
+    "deno.enable": false,
+    "deno.lint": false,
+    "deno.unstable": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}

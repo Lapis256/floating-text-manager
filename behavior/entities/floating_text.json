@@ -7,6 +7,11 @@
             "is_summonable": true,
             "is_experimental": false
         },
+        "component_groups": {
+            "lapis256:delete": {
+                "minecraft:instant_despawn": {}
+            }
+        },
         "components": {
             "minecraft:collision_box": {
                 "width": 0.0,
@@ -33,17 +38,14 @@
                 "is_pushable": false,
                 "is_pushable_by_piston": false
             },
-            "minecraft:timer": {
-                "time": 0,
-                "looping": true,
-                "randomInterval": false,
-                "time_down_event": {
-                    "event": "lapis256_floating_text:fix_location"
-                }
-            }
+            "minecraft:tick_world": {}
         },
         "events": {
-            "lapis256_floating_text:fix_location": {}
+            "lapis256:delete": {
+                "add": {
+                    "component_groups": ["lapis256:delete"]
+                }
+            }
         }
     }
 }

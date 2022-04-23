@@ -1,0 +1,20 @@
+item.lapis256:floating_text_manager=Floating Text Manager
+
+name=Name
+text=Text
+dimension=Dimension
+overworld=Overworld
+nether=Nether
+the_end=The End
+
+ui.list=Floating text list
+ui.manage=Manage floating text
+
+ui.manage.edit.name=Edit name
+ui.manage.edit.text=Edit text
+
+ui.manage.teleport.to=Teleport to text
+ui.manage.teleport.here=Teleport here
+ui.manage.delete=§cDelete
+
+ui.create=§b§lCreate new floating text

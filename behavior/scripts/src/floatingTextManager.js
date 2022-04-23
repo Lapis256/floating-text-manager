@@ -1,29 +1,45 @@
-import { world, Location } from "mojang-minecraft";
-import { ActionFormData, ModalFormData } from "mojang-minecraft-ui";
-
+//@ts-check
 import {
-    Gamemode,
+    world,
+    Location,
+    Entity,
+    Player,
+    Dimension,
     EntityQueryOptions,
-    EntityDataDrivenTriggerEventOptions, pprint
-} from "../lib/gametest-utility-lib.js";
+    ItemUseEvent,
+    MinecraftEntityTypes,
+    EntityRaycastOptions,
+    Color,
+    TickEvent,
+    PlayerInventoryComponentContainer,
+} from "mojang-minecraft";
+import { ModalFormData } from "mojang-minecraft-ui";
 
+import { ActionForm } from "../lib/ui.js";
+import {
+    Dimensions,
+    showMarkerParticle,
+    getDimensionColorCode,
+    escape,
+    unescape,
+    saveData,
+    readData,
+    updateLocation,
+    updateName,
+    isCreative,
+} from "./utils.js";
+import { InputSingleText } from "./ui.js";
 
-const NAMESPACE = "lapis256_floating_text:";
-const TAG_NAME = NAMESPACE + "location";
-const EVENT_NAME = NAMESPACE + "fix_location";
-
-function escape(text) {
-    return text.replace("\n", "\\n");
-}
-
-function unescape(text) {
-    return text.replace("\\n", "\n");
-}
+const EVENT_NAME = "lapis256:delete";
 
 export default class FloatingTextManager {
     #itemID;
     #entityType;
 
+    /**
+     * @param  {string} itemID
+     * @param  {string} entityType
+     */
     constructor(itemID, entityType) {
         this.#itemID = itemID;
         this.#entityType = entityType;
@@ -31,117 +47,196 @@ export default class FloatingTextManager {
         this.#subscribeEvents();
     }
 
-    async #openSettings(player) {
-        const form = new ActionFormData()
-            .title("Texts")
-            .button("§bCreate new floating text");
+    *#getFloatingTextEntities() {
+        const options = new EntityQueryOptions();
+        options.type = this.#entityType;
+        for (const entity of Dimensions.overworld.getEntities(options)) {
+            yield entity;
+        }
+    }
 
-        const option = new EntityQueryOptions({ type: this.#entityType });
-        const entities = Array.from(player.dimension.getEntities(option));
-        entities.forEach(e => form.button(escape(e.nameTag)));
-        const { isCanceled, selection } = await form.show(player);
-        if(isCanceled) return;
+    /**
+     * @param  {Entity} player
+     */
+    #getEntitiesFromPlayerViewVector(player) {
+        const options = new EntityRaycastOptions();
+        options.maxDistance = 6;
+        return player
+            .getEntitiesFromViewVector(options)
+            .filter((entity) => entity.id === this.#entityType);
+    }
 
-        if(selection === 0) {
-            await this.#createFloatingText(player);
+    /**
+     * @param  {string} name
+     * @param  {string} text
+     * @param  {Dimension} dimension
+     * @param  {Location} location
+     */
+    async #createFloatingText(name, text, dimension, location) {
+        const entity = dimension.spawnEntity(this.#entityType, location);
+        saveData(entity, {
+            location,
+            dimension,
+            name,
+        });
+        entity.nameTag = text;
+    }
+
+    /**
+     * @param  {Player} player
+     */
+    async #showSettings(player) {
+        const form = new ActionForm()
+            .title("%ui.list")
+            .button("%ui.create", async () => {
+                const [name, text] = await this.#showInputNameAndText(player);
+                if (name === undefined) {
+                    return;
+                }
+                const { dimension, location } = player;
+                this.#createFloatingText(
+                    name,
+                    unescape(text),
+                    dimension,
+                    location
+                );
+            });
+        for (const entity of this.#getFloatingTextEntities()) {
+            const colorCode = getDimensionColorCode(entity.dimension);
+            const { name } = readData(entity);
+            form.button("§" + colorCode + name, async () => {
+                await this.#showFloatingTextSetting(player, entity);
+            });
+        }
+        await form.show(player);
+    }
+
+    /**
+     * @param  {Player} player
+     * @param  {string=} defaultName
+     * @param  {string=} defaultText
+     */
+    async #showInputNameAndText(
+        player,
+        defaultName = "New floating text",
+        defaultText
+    ) {
+        const { isCanceled, formValues } = await new ModalFormData()
+            .title("%ui.create")
+            .textField("%name", "%name", defaultName)
+            .textField("%text", "%text", defaultText)
+            .show(player);
+        if (isCanceled) {
+            return [];
+        }
+        if (formValues.includes("")) {
+            return this.#showInputNameAndText(player, ...formValues);
+        }
+        return formValues;
+    }
+
+    /**
+     * @param  {Player} player
+     * @param  {Entity} entity
+     */
+    async #showFloatingTextSetting(player, entity) {
+        const { nameTag } = entity;
+        const { name, location, dimension } = readData(entity);
+        await new ActionForm()
+            .title("%ui.manage")
+            .body(
+                `%name: ${name}\n%dimension: %${
+                    dimension.id.split(":")[1]
+                }\n%text:\n${nameTag}\n\n`
+            )
+            .button("%ui.manage.edit.name", async () => {
+                const { name } = readData(entity);
+                const newName = await InputSingleText(
+                    player,
+                    "%ui.manage.edit.name",
+                    "%name",
+                    "%name",
+                    name
+                );
+                updateName(entity, newName);
+            })
+            .button("%ui.manage.edit.text", async () => {
+                const text = await InputSingleText(
+                    player,
+                    "%ui.manage.edit.text",
+                    "%text",
+                    "%text",
+                    escape(entity.nameTag)
+                );
+                entity.nameTag = unescape(text);
+            })
+            .button("%ui.manage.teleport.to", () => {
+                player.teleport(location, dimension, 0, 0);
+            })
+            .button("%ui.manage.teleport.here", () => {
+                updateLocation(entity, player.location, player.dimension);
+                entity.teleport(player.location, player.dimension, 0, 0);
+            })
+            .button("%ui.manage.delete", () => {
+                entity.triggerEvent(EVENT_NAME);
+            })
+            .show(player);
+    }
+
+    /**
+     * @param  {ItemUseEvent} ev
+     */
+    #itemUseEventHandler({ item, source }) {
+        if (source.id !== MinecraftEntityTypes.player.id) {
             return;
         }
-        await this.#manageFloatingText(player, entities[selection - 1]);
-    }
 
-    async #createFloatingText(player) {
-        const { isCanceled, formValues } = await (new ModalFormData()
-            .title("§bCreate new floating text")
-            .textField("Text", "Text")
-            .show(player));
-        if(isCanceled) return;
+        if (!isCreative(source) || item.id !== this.#itemID) return;
 
-        const { dimension, location } = player;
-        const entity = dimension.spawnEntity(this.#entityType, location);
-        this.#setLocationTag(entity, location);
-        entity.nameTag = unescape(formValues[0]);
-    }
-
-    async #manageFloatingText(player, entity) {
-        const { nameTag, location, dimension } = entity;
-        const { isCanceled, selection } = await (new ActionFormData()
-            .title("Manage floating text")
-            .body("text: " + nameTag + "\n\n")
-            .button("Edit text")
-            .button("Teleport to text")
-            .button("Teleport here")
-            .button("delete text")
-            .show(player));
-        if(isCanceled) return;
-
-        switch(selection) {
-            case 0:
-                await this.#editName(player, entity);
-                break;
-            case 1:
-                player.teleport(location, dimension, 0, 0);
-                break;
-            case 2:
-                entity.teleport(player.location, player.dimension, 0, 0);
-                this.#setLocationTag(entity, player.location);
-                break;
-            case 3:
-                const health = entity.getComponent("health");
-                health.setCurrent(0);
-                break;
+        for (const entity of this.#getEntitiesFromPlayerViewVector(source)) {
+            //@ts-ignore
+            this.#showFloatingTextSetting(source, entity).catch(console.error);
+            return;
         }
+        //@ts-ignore
+        this.#showSettings(source).catch(console.error);
     }
 
-    async #editName(player, entity) {
-        const { isCanceled, formValues } = await (new ModalFormData()
-            .title("§Edit text")
-            .textField("Text", "Text", escape(entity.nameTag))
-            .show(player));
-        if(isCanceled) return;
-
-        entity.nameTag = unescape(formValues[0]);
-    }
-
-    #getLocation(entity) {
-        const tag = this.#getLocationTag(entity);
-        const locationJson = tag.replace(TAG_NAME, "");
-        const { x, y, z } = JSON.parse(locationJson);
-        return new Location(x, y, z);
-    }
-
-    #getLocationTag(entity) {
-        const tags = entity.getTags();
-        return tags.find(t => t.startsWith(TAG_NAME));
-    }
-
-    #setLocationTag(entity, { x, y, z }) {
-        const tag = this.#getLocationTag(entity);
-        if(tag) entity.removeTag(tag);
-        entity.addTag(TAG_NAME + JSON.stringify({ x, y, z }));
-    }
-
-    #itemUseEventHandler({ item, source: player }) {
-        if(!Gamemode.isCreative(player) || item.id !== this.#itemID) return;
-
-        this.#openSettings(player).catch(console.error);
-    }
-
-    #entityEventHandler({ id, entity }) {
-        if(id !== EVENT_NAME) return;
-
-        const location = this.#getLocation(entity);
-        entity.teleport(location, entity.dimension, 0, 0);
+    /**
+     * @param {TickEvent} ev
+     */
+    #tickEventHandler({ currentTick }) {
+        for (const entity of this.#getFloatingTextEntities()) {
+            const { location, dimension } = readData(entity);
+            if (!entity.location.equals(location)) {
+                entity.teleport(location, dimension, 0, 0);
+            }
+        }
+        for (const player of world.getPlayers()) {
+            /** @type {PlayerInventoryComponentContainer} */
+            const container = player.getComponent(
+                "minecraft:inventory"
+                //@ts-ignore
+            ).container;
+            const selectedItem = container.getItem(player.selectedSlot);
+            if (selectedItem?.id !== this.#itemID) {
+                continue;
+            }
+            for (const entity of this.#getEntitiesFromPlayerViewVector(player))
+                showMarkerParticle(
+                    entity.dimension,
+                    entity.location,
+                    currentTick % 5
+                        ? new Color(1, 1, 1, 1)
+                        : new Color(0, 0, 0, 1)
+                );
+        }
     }
 
     #subscribeEvents() {
         world.events.beforeItemUse.subscribe(
             this.#itemUseEventHandler.bind(this)
         );
-        world.events.beforeDataDrivenEntityTriggerEvent.subscribe(
-            this.#entityEventHandler.bind(this),
-            new EntityDataDrivenTriggerEventOptions({
-                entityTypes: [ this.#entityType ]
-            })
-        );
+        world.events.tick.subscribe(this.#tickEventHandler.bind(this));
     }
 }

@@ -4,22 +4,22 @@
         "description": "Floating Text Manager Addon",
         "name": "Floating Text Manager Addon",
         "uuid": "01ecf46f-09bf-454e-9f98-8a14e12c6eea",
-        "version": [ 1, 0, 0 ],
-        "min_engine_version": [ 1, 18, 20 ]
+        "version": [1, 1, 0],
+        "min_engine_version": [1, 18, 30]
     },
     "modules": [
         {
             "description": "Floating Text Manager Resource",
             "type": "resources",
             "uuid": "9b97ea41-79b3-4e6e-9e6f-d12a842ecd09",
-            "version": [ 1, 0, 0 ]
+            "version": [1, 1, 0]
         }
     ],
     "dependencies": [
         {
             /* Behavior Pack */
             "uuid": "d9ac7288-9c6b-4570-892d-09f62b28f46d",
-            "version": [ 1, 0, 0 ]
+            "version": [1, 0, 0]
         }
     ]
 }
