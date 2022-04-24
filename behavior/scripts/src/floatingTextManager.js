@@ -208,9 +208,7 @@ export default class FloatingTextManager {
     #tickEventHandler({ currentTick }) {
         for (const entity of this.#getFloatingTextEntities()) {
             const { location, dimension } = readData(entity);
-            if (!entity.location.equals(location)) {
-                entity.teleport(location, dimension, 0, 0);
-            }
+            entity.teleport(location, dimension, 0, 0);
         }
         for (const player of world.getPlayers()) {
             /** @type {PlayerInventoryComponentContainer} */
