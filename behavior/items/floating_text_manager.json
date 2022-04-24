@@ -1,5 +1,5 @@
 {
-    "format_version": "1.16.100",
+    "format_version": "1.18.0",
     "minecraft:item": {
         "description": {
             "identifier": "lapis256:floating_text_manager"
@@ -11,7 +11,10 @@
             "minecraft:icon": {
                 "texture": "book_portfolio"
             },
-            "minecraft:on_use_on" : {}
+            "minecraft:creative_category": {
+                "category": "Equipment"
+            },
+            "minecraft:on_use_on": {}
         }
     }
 }
