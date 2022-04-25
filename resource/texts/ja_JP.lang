@@ -8,6 +8,7 @@ nether=ネザー
 the_end=ジ・エンド
 
 ui.list=フローティングテキスト一覧
+ui.convert=管理可能なフローティングテキストに変換
 ui.manage=フローティングテキストを管理
 
 ui.manage.edit.name=名前を編集

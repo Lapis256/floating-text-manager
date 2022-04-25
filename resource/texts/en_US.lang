@@ -8,6 +8,7 @@ nether=Nether
 the_end=The End
 
 ui.list=Floating text list
+ui.convert=Convert to manageable floating text
 ui.manage=Manage floating text
 
 ui.manage.edit.name=Edit name

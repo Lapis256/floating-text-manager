@@ -12,6 +12,7 @@ import {
     Color,
     TickEvent,
     PlayerInventoryComponentContainer,
+    EntityHealthComponent,
 } from "mojang-minecraft";
 import { ModalFormData } from "mojang-minecraft-ui";
 
@@ -31,6 +32,7 @@ import {
 import { InputSingleText } from "./ui.js";
 
 const EVENT_NAME = "lapis256:delete";
+const NEW_FLOATING_TEXT = "New floating text";
 
 export default class FloatingTextManager {
     #itemID;
@@ -58,12 +60,26 @@ export default class FloatingTextManager {
     /**
      * @param  {Entity} player
      */
-    #getEntitiesFromPlayerViewVector(player) {
+    #getFloatingTextEntitiesFromPlayerViewVector(player) {
         const options = new EntityRaycastOptions();
         options.maxDistance = 6;
         return player
             .getEntitiesFromViewVector(options)
             .filter((entity) => entity.id === this.#entityType);
+    }
+
+    /**
+     * @param  {Entity} player
+     */
+    #getConvertibleEntitiesFromPlayerViewVector(player) {
+        const options = new EntityRaycastOptions();
+        options.maxDistance = 6;
+        return player
+            .getEntitiesFromViewVector(options)
+            .filter(
+                (entity) =>
+                    entity.nameTag !== "" && entity.id !== this.#entityType
+            );
     }
 
     /**
@@ -118,7 +134,7 @@ export default class FloatingTextManager {
      */
     async #showInputNameAndText(
         player,
-        defaultName = "New floating text",
+        defaultName = NEW_FLOATING_TEXT,
         defaultText
     ) {
         const { isCanceled, formValues } = await new ModalFormData()
@@ -184,18 +200,46 @@ export default class FloatingTextManager {
     }
 
     /**
+     * @param  {Entity} entity
+     * @param  {string} name
+     */
+    #convertEntityToFloatingText(entity, name) {
+        const { nameTag, dimension, location } = entity;
+        this.#createFloatingText(name, nameTag, dimension, location);
+
+        /** @type {EntityHealthComponent} */
+        // @ts-ignore
+        const health = entity.getComponent("minecraft:health");
+        health.setCurrent(0);
+    }
+
+    /**
      * @param  {ItemUseEvent} ev
      */
     #itemUseEventHandler({ item, source }) {
-        if (source.id !== MinecraftEntityTypes.player.id) {
-            return;
-        }
-
+        if (source.id !== MinecraftEntityTypes.player.id) return;
         if (!isCreative(source) || item.id !== this.#itemID) return;
 
-        for (const entity of this.#getEntitiesFromPlayerViewVector(source)) {
+        for (const entity of this.#getFloatingTextEntitiesFromPlayerViewVector(
+            source
+        )) {
             //@ts-ignore
             this.#showFloatingTextSetting(source, entity).catch(console.error);
+            return;
+        }
+        for (const entity of this.#getConvertibleEntitiesFromPlayerViewVector(
+            source
+        )) {
+            InputSingleText(
+                // @ts-ignore
+                source,
+                "%ui.convert",
+                "%name",
+                "%name",
+                NEW_FLOATING_TEXT
+            ).then((name) => {
+                this.#convertEntityToFloatingText(entity, name);
+            });
             return;
         }
         //@ts-ignore
@@ -220,7 +264,9 @@ export default class FloatingTextManager {
             if (selectedItem?.id !== this.#itemID) {
                 continue;
             }
-            for (const entity of this.#getEntitiesFromPlayerViewVector(player))
+            for (const entity of this.#getFloatingTextEntitiesFromPlayerViewVector(
+                player
+            )) {
                 showMarkerParticle(
                     entity.dimension,
                     entity.location,
@@ -228,6 +274,20 @@ export default class FloatingTextManager {
                         ? new Color(1, 1, 1, 1)
                         : new Color(0, 0, 0, 1)
                 );
+                break;
+            }
+            for (const entity of this.#getConvertibleEntitiesFromPlayerViewVector(
+                player
+            )) {
+                showMarkerParticle(
+                    entity.dimension,
+                    entity.location,
+                    currentTick % 5
+                        ? new Color(0, 1, 0, 1)
+                        : new Color(0, 0, 0, 1)
+                );
+                break;
+            }
         }
     }
 
