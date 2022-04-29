@@ -88,7 +88,7 @@ export default class FloatingTextManager {
      * @param  {Dimension} dimension
      * @param  {Location} location
      */
-    async #createFloatingText(name, text, dimension, location) {
+    #createFloatingText(name, text, dimension, location) {
         const entity = dimension.spawnEntity(this.#entityType, location);
         saveData(entity, {
             location,

@@ -25,7 +25,9 @@ This add-on adds tools to create and manage floating characters.
   - Pressing the button with the name of the floating text opens the [management UI](#how-to-operate-the-floating-text-management-ui) for that floating text.
   - The color of the floating text name represents the dimension in which the floating text resides.
 - You can directly open the Floating Text [Management UI](#how-to-operate-the-floating-text-management-ui) with the Focused Floating Text by holding the `Floating Text Manager` and using the Floating Text Focused Item.
-  - If the viewpoint is correct, blinking particles will be displayed.
+  - If the viewpoint is correct, you will see particles that flash in black and white.
+- You can replace a focused entity with floating text by using the Focused Entity to a named entity while having a `floating text manager`.
+  - If the viewpoint is correct, you will see particles that flash green and black.
 
 ### How to operate the floating text creation UI
 - `Name`: You can set a name for floating text
