@@ -174,7 +174,7 @@ export default class FloatingTextManager {
                     "%name",
                     name
                 );
-                updateName(entity, newName);
+                if (newName) updateName(entity, newName);
             })
             .button("%ui.manage.edit.text", async () => {
                 const text = await InputSingleText(
@@ -184,7 +184,7 @@ export default class FloatingTextManager {
                     "%text",
                     escape(entity.nameTag)
                 );
-                entity.nameTag = unescape(text);
+                if (text) entity.nameTag = unescape(text);
             })
             .button("%ui.manage.teleport.to", () => {
                 player.teleport(location, dimension, 0, 0);
@@ -238,7 +238,7 @@ export default class FloatingTextManager {
                 "%name",
                 NEW_FLOATING_TEXT
             ).then((name) => {
-                this.#convertEntityToFloatingText(entity, name);
+                if (name) this.#convertEntityToFloatingText(entity, name);
             });
             return;
         }

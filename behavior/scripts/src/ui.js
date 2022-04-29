@@ -8,7 +8,7 @@ import { ModalFormData } from "mojang-minecraft-ui";
  * @param  {string} label
  * @param  {string} placeholderText
  * @param  {string=} defaultValue
- * @return {Promise<string>}
+ * @return {Promise<string?>}
  */
 export async function InputSingleText(
     player,
@@ -24,6 +24,9 @@ export async function InputSingleText(
         .title(title)
         .textField(label, placeholderText, defaultValue)
         .show(player);
+
+    if (isCanceled) return;
+
     if (text === "") {
         return await InputSingleText(
             player,
