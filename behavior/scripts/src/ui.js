@@ -17,17 +17,14 @@ export async function InputSingleText(
     placeholderText,
     defaultValue
 ) {
-    const {
-        isCanceled,
-        formValues: [text],
-    } = await new ModalFormData()
+    const { isCanceled, formValues } = await new ModalFormData()
         .title(title)
         .textField(label, placeholderText, defaultValue)
         .show(player);
 
     if (isCanceled) return;
 
-    if (text === "") {
+    if (formValues[0] === "") {
         return await InputSingleText(
             player,
             title,
@@ -36,5 +33,5 @@ export async function InputSingleText(
             defaultValue
         );
     }
-    return text;
+    return formValues[0];
 }
