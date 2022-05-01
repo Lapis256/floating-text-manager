@@ -12,7 +12,7 @@ import {
     Color,
     TickEvent,
     PlayerInventoryComponentContainer,
-    EntityHealthComponent,
+    // EntityHealthComponent,
 } from "mojang-minecraft";
 import { ModalFormData } from "mojang-minecraft-ui";
 
@@ -207,9 +207,10 @@ export default class FloatingTextManager {
         const { nameTag, dimension, location } = entity;
         this.#createFloatingText(name, nameTag, dimension, location);
 
-        /** @type {EntityHealthComponent} */
+        // /** @type {EntityHealthComponent} */
         // @ts-ignore
         const health = entity.getComponent("minecraft:health");
+        // @ts-ignore
         health.setCurrent(0);
     }
 
