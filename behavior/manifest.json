@@ -4,7 +4,7 @@
         "description": "Floating Text Manager Addon",
         "name": "Floating Text Manager Addon",
         "uuid": "d9ac7288-9c6b-4570-892d-09f62b28f46d",
-        "version": [1, 1, 1],
+        "version": [1, 1, 2],
         "min_engine_version": [1, 18, 30]
     },
     "modules": [
@@ -14,20 +14,20 @@
             "type": "javascript",
             "language": "JavaScript",
             "entry": "scripts/main.js",
-            "version": [1, 1, 1]
+            "version": [1, 1, 2]
         },
         {
             "description": "Floating Text Manager Data",
             "uuid": "94555736-9808-4a5d-b92e-a9f75d1980a2",
             "type": "data",
-            "version": [1, 1, 1]
+            "version": [1, 1, 2]
         }
     ],
     "dependencies": [
         {
             /* Resource Pack */
             "uuid": "01ecf46f-09bf-454e-9f98-8a14e12c6eea",
-            "version": [1, 1, 1]
+            "version": [1, 1, 2]
         },
         {
             /* GameTest Module */

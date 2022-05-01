@@ -43,7 +43,7 @@ export function getDimensionColorCode(dimension) {
  * @return {string}
  */
 export function escape(text) {
-    return text.replace("\n", "\\n");
+    return text.replaceAll("\n", "\\n");
 }
 
 /**
@@ -51,7 +51,7 @@ export function escape(text) {
  * @return {string}
  */
 export function unescape(text) {
-    return text.replace("\\n", "\n");
+    return text.replaceAll("\\n", "\n");
 }
 
 const TAG_NAME = "lapis256_floating_text:data";
