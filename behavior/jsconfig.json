@@ -2,7 +2,7 @@
     "typeAcquisition": {
         "include": [
             "mojang-minecraft",
-            "./mojang-minecraft-ui.d.ts",
+            "mojang-minecraft-ui",
             "mojang-gametest"
         ]
     },
