@@ -8,6 +8,9 @@ import {
     Location,
     Player,
     Entity,
+    EntityInventoryComponent,
+    EntityHealthComponent,
+    ItemStack,
 } from "mojang-minecraft";
 
 /**
@@ -15,7 +18,7 @@ import {
  * @param  {Location} location
  * @param  {Color} color
  */
-export function showMarkerParticle(dimension, location, color) {
+export function spawnMarkerParticle(dimension, location, color) {
     const variables = new MolangVariableMap();
     variables.setColorRGB("variable.color", color);
     dimension.spawnParticle("lapis256:marker", location, variables);
@@ -52,6 +55,29 @@ export function escape(text) {
  */
 export function unescape(text) {
     return text.replaceAll("\\n", "\n");
+}
+
+/**
+ * @param  {Player} player
+ * @returns {ItemStack=}
+ */
+export function getPlayerSelectedItem(player) {
+    /** @type {EntityInventoryComponent} */
+    // @ts-ignore
+    const { container } = player.getComponent("minecraft:inventory");
+
+    return container.getItem(player.selectedSlot);
+}
+
+/**
+ * @param  {Entity} entity
+ */
+export function killEntity(entity) {
+    /** @type {EntityHealthComponent} */
+    // @ts-ignore
+    const health = entity.getComponent("minecraft:health");
+    // @ts-ignore
+    health.setCurrent(0);
 }
 
 const TAG_NAME = "lapis256_floating_text:data";
@@ -109,28 +135,6 @@ export function readData(entity) {
         location: new Location(x, y, z),
         name,
     };
-}
-
-/**
- * @param  {Entity} entity
- * @param  {Location} location
- * @param  {Dimension} dimension
- */
-export function updateLocation(entity, location, dimension) {
-    const data = readData(entity);
-    data.location = location;
-    data.dimension = dimension;
-    saveData(entity, data);
-}
-
-/**
- * @param  {Entity} entity
- * @param  {string} name
- */
-export function updateName(entity, name) {
-    const data = readData(entity);
-    data.name = name;
-    saveData(entity, data);
 }
 
 /**

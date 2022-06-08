@@ -2,6 +2,7 @@
     "deno.enable": false,
     "deno.lint": false,
     "deno.unstable": false,
+    "prettier.printWidth": 80,
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -9,6 +10,9 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "cSpell.words": [
-        "gametest"
+        "gametest",
+        "Molang",
+        "overworld",
+        "Raycast"
     ]
 }

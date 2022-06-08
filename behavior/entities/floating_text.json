@@ -41,7 +41,7 @@
             "minecraft:tick_world": {}
         },
         "events": {
-            "lapis256:delete": {
+            "lapis256:floating_text_delete": {
                 "add": {
                     "component_groups": ["lapis256:delete"]
                 }
