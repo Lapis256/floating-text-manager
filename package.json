@@ -1,0 +1,6 @@
+{
+    "devDependencies": {
+        "@types/mojang-minecraft": "0.1.5",
+        "@types/mojang-minecraft-ui": "0.1.0"
+    }
+}

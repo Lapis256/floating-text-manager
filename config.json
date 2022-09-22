@@ -1,0 +1,95 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Bedrock-OSS/regolith-schemas/main/config/v1.json",
+    "author": "Lapis256",
+    "name": "floating-text-manager",
+    "packs": {
+        "behaviorPack": "./packs/BP",
+        "resourcePack": "./packs/RP"
+    },
+    "regolith": {
+        "dataPath": "./packs/data",
+        "filterDefinitions": {
+            "gametests": {
+                "url": "github.com/Bedrock-OSS/regolith-filters",
+                "version": "1.2.0"
+            }
+        },
+        "profiles": {
+            "debug": {
+                "export": {
+                    "readOnly": false,
+                    "target": "development"
+                },
+                "filters": [
+                    {
+                        "filter": "gametests",
+                        "settings": {
+                            "buildOptions": {
+                                "bundle": true,
+                                "entryPoints": ["../../src/main.ts"],
+                                "external": ["mojang-minecraft", "mojang-minecraft-ui"],
+                                "format": "esm",
+                                "minify": true,
+                                "target": "es2021"
+                            },
+                            "manifest": "BP/manifest.json",
+                            "moduleUUID": "dcdfd4ba-daa8-45ab-a42f-b57f35d1f64d",
+                            "modules": [],
+                            "outfile": "BP/scripts/main.js"
+                        }
+                    }
+                ]
+            },
+            "debug-preview": {
+                "export": {
+                    "readOnly": false,
+                    "target": "preview"
+                },
+                "filters": [
+                    {
+                        "filter": "gametests",
+                        "settings": {
+                            "buildOptions": {
+                                "bundle": true,
+                                "entryPoints": ["../../src/main.ts"],
+                                "external": ["mojang-minecraft", "mojang-minecraft-ui"],
+                                "format": "esm",
+                                "minify": true,
+                                "target": "es2021"
+                            },
+                            "manifest": "BP/manifest.json",
+                            "moduleUUID": "dcdfd4ba-daa8-45ab-a42f-b57f35d1f64d",
+                            "modules": [],
+                            "outfile": "BP/scripts/main.js"
+                        }
+                    }
+                ]
+            },
+            "default": {
+                "export": {
+                    "readOnly": false,
+                    "target": "local"
+                },
+                "filters": [
+                    {
+                        "filter": "gametests",
+                        "settings": {
+                            "buildOptions": {
+                                "bundle": true,
+                                "entryPoints": ["../../src/main.ts"],
+                                "external": ["mojang-minecraft", "mojang-minecraft-ui"],
+                                "format": "esm",
+                                "minify": true,
+                                "target": "es2021"
+                            },
+                            "manifest": "BP/manifest.json",
+                            "moduleUUID": "dcdfd4ba-daa8-45ab-a42f-b57f35d1f64d",
+                            "modules": [],
+                            "outfile": "BP/scripts/main.js"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
