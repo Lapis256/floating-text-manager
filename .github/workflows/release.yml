@@ -52,7 +52,7 @@ jobs:
                   zip -r ../../behavior.mcpack *
                   cd ..
 
-            - name: Make floating_text_manager.mcaddon
+            - name: Make mcaddon
               run: |
                   zip floating_text_manager.mcaddon resource.mcpack behavior.mcpack
 
@@ -67,7 +67,7 @@ jobs:
                   draft: true
                   prerelease: false
 
-            - name: Upload debug_stick.mcaddon to release
+            - name: Upload mcaddon to release
               id: upload-release-asset
               uses: actions/upload-release-asset@v1
               env:
