@@ -13,26 +13,42 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
 
-            - name: Copy pack_icon.png
-              run: |
-                  cp pack_icon.png resource
-                  cp pack_icon.png behavior
-
-            - name: Install zip
+            - name: Install tool
               run: |
                   sudo apt update
-                  sudo apt install -y zip
+                  sudo apt install -y zip wget
+
+            - name: Install nodejs
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: Setup regolith
+              run: |
+                  wget https://github.com/Bedrock-OSS/regolith/releases/download/0.0.18/regolith_0.0.18_Linux_x86_64.tar.gz
+                  tar -xvf regolith_0.0.18_Linux_x86_64.tar.gz regolith
+                  sudo chmod +x regolith
+                  ./regolith install-all
+
+            - name: Build
+              run: |
+                  ./regolith run
+
+            - name: Copy pack_icon.png
+              run: |
+                  cp pack_icon.png build/RP
+                  cp pack_icon.png build/BP
 
             - name: Make resource.mcpack
               run: |
-                  cd resource
+                  cd build/RP
                   zip -r ../resource.mcpack *
                   cd ..
 
             - name: Make behavior.mcpack
               run: |
-                  cd behavior
-                  zip -r ../behavior.mcpack * -x "*/.vscode/*" -x "*/node_modules/*" -x "mojang-minecraft-ui.d.ts" -x "jsconfig.json" -x "*/.gitignore*" -x "package*.json"
+                  cd build/BP
+                  zip -r ../behavior.mcpack *
                   cd ..
 
             - name: Make debug_stick.mcaddon
