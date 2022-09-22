@@ -43,16 +43,16 @@ jobs:
             - name: Make resource.mcpack
               run: |
                   cd build/RP
-                  zip -r ../resource.mcpack *
+                  zip -r ../../resource.mcpack *
                   cd ..
 
             - name: Make behavior.mcpack
               run: |
                   cd build/BP
-                  zip -r ../behavior.mcpack *
+                  zip -r ../../behavior.mcpack *
                   cd ..
 
-            - name: Make debug_stick.mcaddon
+            - name: Make floating_text_manager.mcaddon
               run: |
                   zip floating_text_manager.mcaddon resource.mcpack behavior.mcpack
 
