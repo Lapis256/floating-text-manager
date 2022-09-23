@@ -7,6 +7,8 @@ import {
     Player,
     EntityInventoryComponent,
     world,
+    EntityQueryOptions,
+    GameMode,
 } from "mojang-minecraft";
 
 export const overworld = world.getDimension(MinecraftDimensionTypes.overworld);
@@ -51,12 +53,14 @@ export function getPlayerSelectedItem(player: Player) {
 }
 
 export function isCreative(player: Player) {
-    try {
-        player.runCommand("testfor @s[m=c]");
-        return true;
-    } catch {
-        return false;
+    const option = new EntityQueryOptions();
+    option.gameMode = GameMode.creative;
+    for (const p of world.getPlayers(option)) {
+        if (p === player) {
+            return true;
+        }
     }
+    return false;
 }
 
 export function errorHandler(error: Error) {
